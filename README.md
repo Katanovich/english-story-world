@@ -25,6 +25,7 @@ with 45 words and grammar patterns and 80 interactive exercises.
 1. [Run it in 3 steps (Docker)](#-run-it-in-3-steps-docker)
 2. [First steps in the app](#-first-steps-in-the-app)
 3. [Why the GitHub link alone does not run the app](#-why-the-github-link-alone-does-not-run-the-app)
+   · [Share it from your own computer (free)](#-share-it-from-your-own-computer-free)
 4. [Local development (without Docker)](#-local-development-without-docker)
 5. [Tests and checks](#-tests-and-checks)
 6. [Project structure](#-project-structure)
@@ -103,6 +104,37 @@ opening the repository link shows the files, not the app. To use the app you eit
   works: a small VPS (Hetzner, DigitalOcean, etc.) or a platform such as Render or Railway
   (backend + PostgreSQL + frontend as separate services). Before going public, follow the
   [production checklist](#production-checklist).
+
+---
+
+## 🌐 Share it from your own computer (free)
+
+Your computer can act as the server through a free **Cloudflare quick tunnel**. No router
+setup and no purchase are needed, and you get a public **HTTPS** link.
+
+```bash
+brew install cloudflared            # once (macOS); other systems: see Cloudflare's docs
+# In .env set APP_ENV=production    # secure cookies when served over HTTPS
+./scripts/share-online.sh
+#  → Your app is online at: https://some-random-words.trycloudflare.com
+```
+
+Send that link to your students. Keep the Terminal window open; `Ctrl+C` stops sharing.
+The script also keeps the Mac awake while the tunnel is open.
+
+Good to know:
+- **The link changes every time** you restart the script. A permanent link needs a
+  free Cloudflare account plus your own domain (named tunnel).
+- The app is online **only while your computer is on, awake and connected**. Closing the lid
+  usually puts a laptop to sleep.
+- Data lives on your computer: back it up, e.g.
+  `docker compose exec db pg_dump -U esw english_story_world > backup.sql`.
+- Only the tunnel is public. Docker publishes the ports on `127.0.0.1` only, so others
+  on your Wi-Fi cannot reach the database or the API directly.
+- With `APP_ENV=production`, use **Chrome, Edge or Firefox** for `http://localhost:3000`.
+  Safari may refuse secure cookies on plain `http://localhost`; the HTTPS tunnel link
+  works everywhere.
+- For many students or everyday use, a small rented server is more reliable.
 
 ---
 

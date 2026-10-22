@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: ${POSTGRES_DB:-english_story_world}
     ports:
-      - "${POSTGRES_HOST_PORT:-5434}:5432"
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5434}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -24,7 +24,7 @@ services:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-esw}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-english_story_world}
       LOCAL_STORAGE_DIR: /data/media
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - media:/data/media
     depends_on:
@@ -38,7 +38,7 @@ services:
         BACKEND_URL: http://backend:8000
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - backend
 

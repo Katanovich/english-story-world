@@ -115,6 +115,22 @@ def test_cross_origin_state_change_is_blocked(client, make_user):
         headers={"Origin": "http://localhost:3000"},
     )
     assert ok.status_code == 200
+    # Same-origin requests via a public/tunnel URL proxied by the frontend are allowed.
+    proxied = client.post(
+        LOGIN,
+        json={"login": "alex", "password": PASSWORD},
+        headers={
+            "Origin": "https://abc.trycloudflare.com",
+            "X-Forwarded-Host": "abc.trycloudflare.com",
+        },
+    )
+    assert proxied.status_code == 200
+    spoofed = client.post(
+        LOGIN,
+        json={"login": "alex", "password": PASSWORD},
+        headers={"Origin": "https://evil.example", "X-Forwarded-Host": "abc.trycloudflare.com"},
+    )
+    assert spoofed.status_code == 403
 
 
 def test_change_password_revokes_sessions(login_as, new_client):
