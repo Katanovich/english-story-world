@@ -113,7 +113,7 @@ slug; review roles are derived across the whole course order. Character names ar
 | Part | Status |
 |------|--------|
 | Course 1: rename system, C2 support, multi-level seed, A1 unit 2 (lessons 6-10) | DONE |
-| Course 2: A2 (10 lessons) | TODO |
+| Course 2: A2 "Everyday Adventures" (lessons 1-10, `a2_unit1.py`, `a2_unit2.py`) | DONE |
 | Course 3: B1 | TODO |
 | Course 4: B2 | TODO |
 | Course 5: C1 | TODO |

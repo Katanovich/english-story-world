@@ -26,8 +26,9 @@ world, and finally his own projects. Content stays child-appropriate at every le
 | Level | Status |
 |---|---|
 | A1 | ✅ done (10 lessons) |
-| A2 | ⏳ next |
-| B1–C2 | planned |
+| A2 | ✅ done (10 lessons) |
+| B1 | ⏳ next |
+| B2–C2 | planned |
 
 ---
 
@@ -40,7 +41,7 @@ Where Is My Ball?
 (numbers 1–10, How old…?) · Lunch at Granny's (food, I don't like, Do you like…?) ·
 Sunny or Rainy? (clothes, weather, Put on…) · I Can Swim! (actions, can/can't; A1 review)
 
-## A2 · Elementary: "Everyday Adventures"
+## A2 · Elementary: "Everyday Adventures" ✅
 
 **Unit 1: School Days**
 1. My School: school objects and rooms; *there is / there are*

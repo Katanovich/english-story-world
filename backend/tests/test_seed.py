@@ -135,6 +135,11 @@ def test_unit_final_quizzes_are_cumulative(db):
     assert _quiz_sources(db, lessons[4]) == {lsn.id for lsn in lessons[:5]}
     sources_10 = _quiz_sources(db, lessons[9])
     assert len(sources_10) >= 5 and sources_10 & {lsn.id for lsn in lessons[:5]}
+    # Every unit's last lesson quizzes every lesson of that unit.
+    for unit in {lsn.unit_id for lsn in lessons}:
+        unit_lessons = [lsn for lsn in lessons if lsn.unit_id == unit]
+        sources = _quiz_sources(db, unit_lessons[-1])
+        assert {lsn.id for lsn in unit_lessons} <= sources, unit_lessons[-1].slug
 
 
 def test_every_seed_answer_key_scores_correct_through_the_api(db, login_as):
