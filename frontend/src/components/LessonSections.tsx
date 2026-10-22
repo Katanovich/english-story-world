@@ -10,7 +10,7 @@ export const SECTION_INFO: Record<Section, { title: string; icon: string; intro:
   VOCABULARY: { title: "Words", icon: "🔤", intro: "Look, listen and learn the new words." },
   READING: { title: "Reading", icon: "📖", intro: "Read the story. The new words are coloured." },
   LISTENING: { title: "Listening", icon: "🎧", intro: "Listen carefully. You can listen again." },
-  GRAMMAR: { title: "Sentences", icon: "🧩", intro: "Learn how to build sentences." },
+  GRAMMAR: { title: "Grammar", icon: "🧩", intro: "Learn the grammar rule, then practise it." },
   SPEAKING: { title: "Speaking", icon: "🎙️", intro: "Now it is your turn to talk!" },
   QUIZ: { title: "Quiz", icon: "🏆", intro: "Show what you remember — new words and old words!" },
 };
