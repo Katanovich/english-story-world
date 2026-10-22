@@ -27,8 +27,9 @@ world, and finally his own projects. Content stays child-appropriate at every le
 |---|---|
 | A1 | ✅ done (10 lessons) |
 | A2 | ✅ done (10 lessons) |
-| B1 | ⏳ next |
-| B2–C2 | planned |
+| B1 | ✅ done (10 lessons) |
+| B2 | ⏳ next |
+| C1–C2 | planned |
 
 ---
 
@@ -57,7 +58,7 @@ Sunny or Rainy? (clothes, weather, Put on…) · I Can Swim! (actions, can/can't
 9. What Did You Do?: past simple, regular and common irregular verbs
 10. A Postcard Home: comparatives; writing a postcard; A2 review
 
-## B1 · Intermediate: "Growing Up"
+## B1 · Intermediate: "Growing Up" ✅
 
 **Unit 1: Clubs and Friends**
 1. The Science Club: experiments; present perfect (ever/never, just/already)
