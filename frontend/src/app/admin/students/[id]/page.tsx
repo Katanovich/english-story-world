@@ -109,7 +109,7 @@ export default function StudentPage() {
           </Field>
           <Field label="Уровень">
             <Select value={enroll.cefr_level} onChange={(e) => setEnroll({ ...enroll, cefr_level: e.target.value })}>
-              {["A1", "A2", "B1", "B2", "C1"].map((l) => <option key={l}>{l}</option>)}
+              {["A1", "A2", "B1", "B2", "C1", "C2"].map((l) => <option key={l}>{l}</option>)}
             </Select>
           </Field>
           <SmallButton type="submit" variant="primary">Назначить</SmallButton>

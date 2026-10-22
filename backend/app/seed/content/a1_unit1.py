@@ -1,39 +1,64 @@
-"""Original A1 pilot module "Little Explorers" (5 connected lessons).
+"""A1 · Unit 1 "Little Explorers": family, home, pets, toys, places (lessons 1-5).
 
-Characters: Alex (brother), Mia (sister), their mother and father, and Spot the dog.
-All text is original. Emoji serve as simple illustrations until artwork is uploaded.
-
-Each exercise lists the learning-item keys it practises. Review roles for a lesson are
-derived from those links (items introduced in the previous lesson = RECENT_REVIEW,
-earlier = OLDER_REVIEW), plus the explicit `review` list for items reused in the story.
+Placeholders like {boy} are replaced with character names at seed time
+(see app/seed/characters.py).
 """
 
-from typing import Any
+from app.seed.content.helpers import (
+    G,
+    Item,
+    V,
+    blank,
+    build,
+    choice,
+    matching,
+    order,
+    speak,
+    true_false,
+)
 
-# ---------------------------------------------------------------------------------------
-# Learning items: key -> (kind, text, emoji, translation_ru, lesson_no, examples, explanation)
-# ---------------------------------------------------------------------------------------
-
-V, G = "VOCABULARY", "GRAMMAR"
-
-ITEMS: dict[str, tuple[str, str, str | None, str, int, list[str], str | None]] = {
+ITEMS: dict[str, Item] = {
     # Lesson 1
-    "vocab.hello": (V, "hello", "👋", "привет", 1, ["Hello! I am Alex."], None),
-    "vocab.goodbye": (V, "goodbye", "👋", "до свидания, пока", 1, ["Goodbye, Mia!"], None),
-    "vocab.my": (V, "my", None, "мой, моя, моё", 1, ["This is my sister."], None),
-    "vocab.name": (V, "name", "🏷️", "имя", 1, ["My name is Mia."], None),
-    "vocab.family": (V, "family", "👨‍👩‍👧‍👦", "семья", 1, ["This is my family."], None),
-    "vocab.mother": (V, "mother", "👩", "мама", 1, ["This is my mother."], None),
-    "vocab.father": (V, "father", "👨", "папа", 1, ["This is my father."], None),
-    "vocab.brother": (V, "brother", "👦", "брат", 1, ["Alex is my brother."], None),
-    "vocab.sister": (V, "sister", "👧", "сестра", 1, ["Mia is my sister."], None),
+    "vocab.hello": (V, "hello", "👋", "привет", "meet-my-family", ["Hello! I am {boy}."], None),
+    "vocab.goodbye": (
+        V,
+        "goodbye",
+        "👋",
+        "до свидания, пока",
+        "meet-my-family",
+        ["Goodbye, {little}!"],
+        None,
+    ),
+    "vocab.my": (V, "my", None, "мой, моя, моё", "meet-my-family", ["This is my sister."], None),
+    "vocab.name": (V, "name", "🏷️", "имя", "meet-my-family", ["My name is {little}."], None),
+    "vocab.family": (
+        V,
+        "family",
+        "👨‍👩‍👧‍👦",
+        "семья",
+        "meet-my-family",
+        ["This is my family."],
+        None,
+    ),
+    "vocab.mother": (V, "mother", "👩", "мама", "meet-my-family", ["This is my mother."], None),
+    "vocab.father": (V, "father", "👨", "папа", "meet-my-family", ["This is my father."], None),
+    "vocab.brother": (V, "brother", "👦", "брат", "meet-my-family", ["{boy} is my brother."], None),
+    "vocab.sister": (
+        V,
+        "sister",
+        "👧",
+        "сестра",
+        "meet-my-family",
+        ["{little} is my sister."],
+        None,
+    ),
     "grammar.i_am": (
         G,
         "I am …",
         None,
         "Я …",
-        1,
-        ["I am Alex.", "I am Mia."],
+        "meet-my-family",
+        ["I am {boy}.", "I am {little}."],
         "Use 'I am' + your name to say who you are.",
     ),
     "grammar.my_name_is": (
@@ -41,8 +66,8 @@ ITEMS: dict[str, tuple[str, str, str | None, str, int, list[str], str | None]] =
         "My name is …",
         None,
         "Меня зовут …",
-        1,
-        ["My name is Alex."],
+        "meet-my-family",
+        ["My name is {boy}."],
         "A polite way to say your name.",
     ),
     "grammar.this_is": (
@@ -50,39 +75,39 @@ ITEMS: dict[str, tuple[str, str, str | None, str, int, list[str], str | None]] =
         "This is …",
         None,
         "Это …",
-        1,
+        "meet-my-family",
         ["This is my mother.", "This is my house."],
         "Use 'This is' to show or introduce someone or something near you.",
     ),
     # Lesson 2
-    "vocab.house": (V, "house", "🏠", "дом", 2, ["This is my house."], None),
-    "vocab.room": (V, "room", "🚪", "комната", 2, ["This is my room."], None),
-    "vocab.door": (V, "door", "🚪", "дверь", 2, ["It is a door."], None),
-    "vocab.table": (V, "table", None, "стол", 2, ["It is a table."], None),
-    "vocab.chair": (V, "chair", "🪑", "стул", 2, ["It is a chair."], None),
-    "vocab.bed": (V, "bed", "🛏️", "кровать", 2, ["This is my bed."], None),
-    "vocab.window": (V, "window", "🪟", "окно", 2, ["It is a window."], None),
+    "vocab.house": (V, "house", "🏠", "дом", "my-home", ["This is my house."], None),
+    "vocab.room": (V, "room", "🚪", "комната", "my-home", ["This is my room."], None),
+    "vocab.door": (V, "door", "🚪", "дверь", "my-home", ["It is a door."], None),
+    "vocab.table": (V, "table", None, "стол", "my-home", ["It is a table."], None),
+    "vocab.chair": (V, "chair", "🪑", "стул", "my-home", ["It is a chair."], None),
+    "vocab.bed": (V, "bed", "🛏️", "кровать", "my-home", ["This is my bed."], None),
+    "vocab.window": (V, "window", "🪟", "окно", "my-home", ["It is a window."], None),
     "grammar.it_is_a": (
         G,
         "It is a …",
         None,
         "Это … (о предмете)",
-        2,
+        "my-home",
         ["It is a bed.", "It is a chair."],
         "Use 'It is a' + one thing to name it.",
     ),
     # Lesson 3
-    "vocab.dog": (V, "dog", "🐶", "собака", 3, ["I have a dog."], None),
-    "vocab.cat": (V, "cat", "🐱", "кошка", 3, ["It is a cat."], None),
-    "vocab.fish": (V, "fish", "🐟", "рыбка", 3, ["Mia has a fish."], None),
-    "vocab.bird": (V, "bird", "🐦", "птица", 3, ["It is a bird."], None),
-    "vocab.pet": (V, "pet", "🐾", "домашний питомец", 3, ["I have a pet."], None),
+    "vocab.dog": (V, "dog", "🐶", "собака", "my-little-pet", ["I have a dog."], None),
+    "vocab.cat": (V, "cat", "🐱", "кошка", "my-little-pet", ["It is a cat."], None),
+    "vocab.fish": (V, "fish", "🐟", "рыбка", "my-little-pet", ["{little} has a fish."], None),
+    "vocab.bird": (V, "bird", "🐦", "птица", "my-little-pet", ["It is a bird."], None),
+    "vocab.pet": (V, "pet", "🐾", "домашний питомец", "my-little-pet", ["I have a pet."], None),
     "grammar.i_have_a": (
         G,
         "I have a …",
         None,
         "У меня есть …",
-        3,
+        "my-little-pet",
         ["I have a dog.", "I have a fish."],
         "Use 'I have a' + one thing that belongs to you.",
     ),
@@ -91,25 +116,25 @@ ITEMS: dict[str, tuple[str, str, str | None, str, int, list[str], str | None]] =
         "What is this? — It is a …",
         None,
         "Что это? — Это …",
-        3,
+        "my-little-pet",
         ["What is this? It is a cat."],
         "Ask 'What is this?' and answer 'It is a …'.",
     ),
     # Lesson 4
-    "vocab.red": (V, "red", "🔴", "красный", 4, ["a red car"], None),
-    "vocab.blue": (V, "blue", "🔵", "синий", 4, ["a blue ball"], None),
-    "vocab.green": (V, "green", "🟢", "зелёный", 4, ["a green ball"], None),
-    "vocab.yellow": (V, "yellow", "🟡", "жёлтый", 4, ["a yellow doll"], None),
-    "vocab.ball": (V, "ball", "⚽", "мяч", 4, ["It is a red ball."], None),
-    "vocab.car": (V, "car", "🚗", "машинка", 4, ["I have a blue car."], None),
-    "vocab.doll": (V, "doll", "🪆", "кукла", 4, ["I like my doll."], None),
-    "vocab.toy": (V, "toy", "🧸", "игрушка", 4, ["My toy is a car."], None),
+    "vocab.red": (V, "red", "🔴", "красный", "colors-and-toys", ["a red car"], None),
+    "vocab.blue": (V, "blue", "🔵", "синий", "colors-and-toys", ["a blue ball"], None),
+    "vocab.green": (V, "green", "🟢", "зелёный", "colors-and-toys", ["a green ball"], None),
+    "vocab.yellow": (V, "yellow", "🟡", "жёлтый", "colors-and-toys", ["a yellow doll"], None),
+    "vocab.ball": (V, "ball", "⚽", "мяч", "colors-and-toys", ["It is a red ball."], None),
+    "vocab.car": (V, "car", "🚗", "машинка", "colors-and-toys", ["I have a blue car."], None),
+    "vocab.doll": (V, "doll", "🪆", "кукла", "colors-and-toys", ["I like my doll."], None),
+    "vocab.toy": (V, "toy", "🧸", "игрушка", "colors-and-toys", ["My toy is a car."], None),
     "grammar.adjective_noun": (
         G,
         "a red ball (colour + thing)",
         None,
         "красный мяч",
-        4,
+        "colors-and-toys",
         ["a red ball", "a green car"],
         "In English the colour comes before the thing: a red ball.",
     ),
@@ -118,23 +143,31 @@ ITEMS: dict[str, tuple[str, str, str | None, str, int, list[str], str | None]] =
         "I like …",
         None,
         "Мне нравится …",
-        4,
+        "colors-and-toys",
         ["I like my doll.", "I like red."],
         "Use 'I like' to say what you enjoy.",
     ),
     # Lesson 5
-    "vocab.where": (V, "where", "❓", "где", 5, ["Where is my ball?"], None),
-    "vocab.here": (V, "here", "👇", "здесь, тут", 5, ["My car is here."], None),
-    "vocab.there": (V, "there", "👉", "там", 5, ["The ball is there!"], None),
-    "vocab.in": (V, "in", "📥", "в", 5, ["The fish is in the water."], None),
-    "vocab.on": (V, "on", "⬆️", "на", 5, ["The doll is on the chair."], None),
-    "vocab.under": (V, "under", "⬇️", "под", 5, ["The ball is under the table."], None),
+    "vocab.where": (V, "where", "❓", "где", "where-is-my-ball", ["Where is my ball?"], None),
+    "vocab.here": (V, "here", "👇", "здесь, тут", "where-is-my-ball", ["My car is here."], None),
+    "vocab.there": (V, "there", "👉", "там", "where-is-my-ball", ["The ball is there!"], None),
+    "vocab.in": (V, "in", "📥", "в", "where-is-my-ball", ["The fish is in the water."], None),
+    "vocab.on": (V, "on", "⬆️", "на", "where-is-my-ball", ["The doll is on the chair."], None),
+    "vocab.under": (
+        V,
+        "under",
+        "⬇️",
+        "под",
+        "where-is-my-ball",
+        ["The ball is under the table."],
+        None,
+    ),
     "grammar.where_is": (
         G,
         "Where is …?",
         None,
         "Где …?",
-        5,
+        "where-is-my-ball",
         ["Where is my ball?", "Where is Spot?"],
         "Ask 'Where is' + a thing to find it.",
     ),
@@ -143,175 +176,17 @@ ITEMS: dict[str, tuple[str, str, str | None, str, int, list[str], str | None]] =
         "It is in / on / under …",
         None,
         "Он в / на / под …",
-        5,
+        "where-is-my-ball",
         ["It is under the bed.", "It is on the chair."],
         "Answer 'Where is …?' with 'It is' + in / on / under + place.",
     ),
 }
 
-FB_OK = "Great job!"
-FB_TRY = "Not yet. Have another try!"
-
-
-def _fb(hint: str, explanation: str) -> dict[str, str]:
-    return {"correct": FB_OK, "incorrect": FB_TRY, "hint": hint, "explanation": explanation}
-
-
-def _opts(*options: tuple[str | None, str | None]) -> list[dict[str, Any]]:
-    """Options from (text, emoji) pairs with ids a, b, c..."""
-    out = []
-    for i, (text, emoji) in enumerate(options):
-        o: dict[str, Any] = {"id": "abcdefgh"[i]}
-        if text:
-            o["text"] = text
-        if emoji:
-            o["emoji"] = emoji
-        out.append(o)
-    return out
-
-
-def choice(
-    key,
-    section,
-    instructions,
-    question,
-    options,
-    correct,
-    items,
-    hint,
-    expl,
-    ex_type="MULTIPLE_CHOICE",
-    **extra,
-):
-    prompt = {"question": question, "options": _opts(*options), **extra}
-    return dict(
-        key=key,
-        type=ex_type,
-        section=section,
-        mode="RECOGNITION",
-        instructions=instructions,
-        prompt=prompt,
-        answer={"correct": correct},
-        items=items,
-        feedback=_fb(hint, expl),
-        points=1,
-    )
-
-
-def true_false(key, section, instructions, statement, correct, items, hint, expl, **extra):
-    return dict(
-        key=key,
-        type="TRUE_FALSE",
-        section=section,
-        mode="RECOGNITION",
-        instructions=instructions,
-        prompt={"statement": statement, **extra},
-        answer={"correct": correct},
-        items=items,
-        feedback=_fb(hint, expl),
-        points=1,
-    )
-
-
-def matching(key, section, instructions, pairs, items, hint, expl):
-    """pairs: list of (left_text, right_text_or_None, right_emoji_or_None)."""
-    left = [{"id": f"l{i}", "text": lt} for i, (lt, _, _) in enumerate(pairs)]
-    right = []
-    for i, (_, rt, re) in enumerate(pairs):
-        o: dict[str, Any] = {"id": f"r{i}"}
-        if rt:
-            o["text"] = rt
-        if re:
-            o["emoji"] = re
-        right.append(o)
-    answer = {"pairs": {f"l{i}": f"r{i}" for i in range(len(pairs))}}
-    return dict(
-        key=key,
-        type="MATCHING",
-        section=section,
-        mode="RECOGNITION",
-        instructions=instructions,
-        prompt={"left": left, "right": right},
-        answer=answer,
-        items=items,
-        feedback=_fb(hint, expl),
-        points=2,
-    )
-
-
-def build(key, section, instructions, sentence, items, hint, expl, extra_accepted=()):
-    tiles = sentence.rstrip(".?!").split()
-    return dict(
-        key=key,
-        type="SENTENCE_BUILDER",
-        section=section,
-        mode="RECALL",
-        instructions=instructions,
-        prompt={"tiles": tiles, "hint": hint},
-        answer={"accepted": [sentence, *extra_accepted]},
-        items=items,
-        feedback=_fb(hint, expl),
-        points=2,
-    )
-
-
-def blank(key, section, instructions, text, answers, word_bank, items, hint, expl, hint_ru=None):
-    prompt: dict[str, Any] = {"text": text, "word_bank": word_bank}
-    if hint_ru:
-        prompt["hint_ru"] = hint_ru
-    return dict(
-        key=key,
-        type="FILL_BLANK",
-        section=section,
-        mode="RECALL",
-        instructions=instructions,
-        prompt=prompt,
-        answer={"blanks": [[a] for a in answers]},
-        items=items,
-        feedback=_fb(hint, expl),
-        points=1,
-    )
-
-
-def order(key, section, instructions, events, items, hint, expl):
-    prompt_items = [{"id": f"e{i}", "text": t} for i, t in enumerate(events)]
-    return dict(
-        key=key,
-        type="ORDER_EVENTS",
-        section=section,
-        mode="RECOGNITION",
-        instructions=instructions,
-        prompt={"items": prompt_items},
-        answer={"order": [f"e{i}" for i in range(len(events))]},
-        items=items,
-        feedback=_fb(hint, expl),
-        points=2,
-    )
-
-
-def speak(key, instructions, text, model_answer, items):
-    return dict(
-        key=key,
-        type="SPEAKING",
-        section="SPEAKING",
-        mode="RECALL",
-        instructions=instructions,
-        prompt={"text": text, "model_answer": model_answer},
-        answer={},
-        items=items,
-        feedback={"correct": "Well done for speaking! Listen to the model and compare."},
-        points=0,
-    )
-
-
-# ---------------------------------------------------------------------------------------
-# Lessons
-# ---------------------------------------------------------------------------------------
 
 LESSON_1 = {
     "slug": "meet-my-family",
     "title": "Meet My Family",
-    "description": "Alex says hello and shows you his family.",
+    "description": "{boy} says hello and shows you his family.",
     "minutes": 20,
     "objectives": [
         "Say hello and goodbye.",
@@ -321,19 +196,19 @@ LESSON_1 = {
     ],
     "review": [],
     "episode": (
-        "Hello, Alex!",
-        "Alex meets the viewer, introduces his sister Mia and then "
+        "Hello, {boy}!",
+        "{boy} meets the viewer, introduces his sister {little} and then "
         "his mother and father. At the end everyone waves goodbye.",
     ),
     "content": {
-        "story_intro": "Alex wants to meet you! He has a sister and a mother and a father.",
+        "story_intro": "{boy} wants to meet you! He has a little sister, {little}, a mother and a father.",
         "reading": {
-            "title": "Hello, I am Alex",
+            "title": "Hello, I am {boy}",
             "paragraphs": [
-                {"sentences": ["Hello! I am Alex.", "My name is Alex."]},
-                {"sentences": ["This is my sister.", "Her name is Mia."]},
-                {"sentences": ["Mia says: Hello! I am Mia.", "Alex is my brother."]},
-                {"sentences": ["This is my mother.", "This is my father."]},
+                {"sentences": ["Hello! I am {boy}.", "My name is {boy}."]},
+                {"sentences": ["This is my sister.", "Her name is {little}."]},
+                {"sentences": ["{little} says: Hello! I am {little}.", "{boy} is my brother."]},
+                {"sentences": ["This is my mother, {mum}.", "This is my father, {dad}."]},
                 {"sentences": ["This is my family.", "Goodbye!"]},
             ],
             "highlight": [
@@ -351,31 +226,31 @@ LESSON_1 = {
         "listening": [
             {
                 "id": "l1-meet",
-                "title": "Alex and Mia say hello",
+                "title": "{boy} and {little} say hello",
                 "transcript": [
-                    {"speaker": "Alex", "text": "Hello! I am Alex."},
-                    {"speaker": "Mia", "text": "Hello! My name is Mia."},
-                    {"speaker": "Alex", "text": "Mia is my sister."},
-                    {"speaker": "Mia", "text": "And Alex is my brother."},
+                    {"speaker": "{boy}", "text": "Hello! I am {boy}."},
+                    {"speaker": "{little}", "text": "Hello! My name is {little}."},
+                    {"speaker": "{boy}", "text": "{little} is my sister."},
+                    {"speaker": "{little}", "text": "And {boy} is my brother."},
                 ],
             },
             {
                 "id": "l1-parents",
                 "title": "Mother and father",
                 "transcript": [
-                    {"speaker": "Alex", "text": "This is my mother."},
+                    {"speaker": "{boy}", "text": "This is my mother."},
                     {"speaker": "Mother", "text": "Hello!"},
-                    {"speaker": "Alex", "text": "This is my father."},
-                    {"speaker": "Father", "text": "Hello! Goodbye, Alex!"},
+                    {"speaker": "{boy}", "text": "This is my father."},
+                    {"speaker": "Father", "text": "Hello! Goodbye, {boy}!"},
                 ],
             },
         ],
         "grammar": [
             {
                 "title": "I am … / My name is …",
-                "explanation": "Say who you are: I am Alex. My name is Alex.",
+                "explanation": "Say who you are: I am {boy}. My name is {boy}.",
                 "explanation_ru": "«I am …» — «Я …». «My name is …» — «Меня зовут …».",
-                "examples": ["I am Mia.", "My name is Mia."],
+                "examples": ["I am {little}.", "My name is {little}."],
             },
             {
                 "title": "This is my …",
@@ -408,7 +283,7 @@ LESSON_1 = {
             [(None, "👦"), (None, "👧"), (None, "👨")],
             "b",
             ["vocab.sister"],
-            "Mia is a sister.",
+            "{little} is a sister.",
             "A sister is a girl: 👧.",
             ex_type="IMAGE_SELECTION",
         ),
@@ -417,46 +292,46 @@ LESSON_1 = {
             "LISTENING",
             "Listen. Who is speaking?",
             "Who is it?",
-            [("Alex", "👦"), ("Mia", "👧")],
+            [("{boy}", "👦"), ("{little}", "👧")],
             "b",
             ["vocab.name", "grammar.my_name_is"],
             "Listen for the name.",
-            "She says: My name is Mia.",
+            "She says: My name is {little}.",
             ex_type="LISTENING_COMPREHENSION",
-            listen_text="Hello! My name is Mia.",
+            listen_text="Hello! My name is {little}.",
         ),
         true_false(
             "mia-sister",
             "LISTENING",
-            "Listen to Alex and Mia. True or false?",
-            "Mia is Alex's sister.",
+            "Listen to {boy} and {little}. True or false?",
+            "{little} is {boy}'s sister.",
             True,
             ["vocab.sister", "vocab.brother"],
-            "Alex says: Mia is my …",
-            "Alex says: Mia is my sister.",
+            "{boy} says: {little} is my …",
+            "{boy} says: {little} is my sister.",
             listening_id="l1-meet",
         ),
         blank(
             "my-name-is",
             "GRAMMAR",
             "Choose the missing word.",
-            "My ___ is Alex.",
+            "My ___ is {boy}.",
             ["name"],
             ["name", "family", "hello"],
             ["vocab.name", "grammar.my_name_is"],
-            "My … is Alex. (Меня зовут …)",
-            "We say: My name is Alex.",
+            "My … is {boy}. (Меня зовут …)",
+            "We say: My name is {boy}.",
         ),
         blank(
             "i-am",
             "GRAMMAR",
             "Choose the missing word.",
-            "Hello! I ___ Mia.",
+            "Hello! I ___ {little}.",
             ["am"],
             ["am", "is"],
             ["grammar.i_am", "vocab.hello"],
             "I … — we always use 'am' after 'I'.",
-            "We say: I am Mia.",
+            "We say: I am {little}.",
         ),
         build(
             "build-mother",
@@ -471,28 +346,28 @@ LESSON_1 = {
             "build-name",
             "GRAMMAR",
             "Put the words in order.",
-            "My name is Alex.",
+            "My name is {boy}.",
             ["grammar.my_name_is", "vocab.name"],
             "Start with 'My'.",
-            "My name is Alex.",
+            "My name is {boy}.",
         ),
         choice(
             "read-mia",
             "READING",
             "Read the story. Then answer.",
-            "In the story, Mia is …",
+            "In the story, {little} is …",
             [("the sister", "👧"), ("the mother", "👩"), ("the father", "👨")],
             "a",
             ["vocab.sister"],
             "Look at paragraph 2.",
-            "This is my sister. Her name is Mia.",
+            "This is my sister. Her name is {little}.",
             ex_type="READING_COMPREHENSION",
         ),
         true_false(
             "read-goodbye",
             "READING",
             "Read the story. True or false?",
-            "At the end, Alex says goodbye.",
+            "At the end, {boy} says goodbye.",
             True,
             ["vocab.goodbye"],
             "Look at the last line.",
@@ -502,7 +377,7 @@ LESSON_1 = {
             "say-hello",
             "Say hello and your name. Then say who is in your family.",
             "Hello! I am … My name is … This is my …",
-            "Hello! I am Alex. My name is Alex. This is my sister.",
+            "Hello! I am {boy}. My name is {boy}. This is my sister.",
             ["vocab.hello", "grammar.i_am", "grammar.this_is"],
         ),
         choice(
@@ -532,10 +407,10 @@ LESSON_1 = {
             "QUIZ",
             "Put the story in order.",
             [
-                "Alex says hello.",
-                "Alex shows his sister, Mia.",
-                "Alex shows his mother and father.",
-                "Alex says goodbye.",
+                "{boy} says hello.",
+                "{boy} shows his sister, {little}.",
+                "{boy} shows his mother and father.",
+                "{boy} says goodbye.",
             ],
             ["vocab.hello", "vocab.goodbye", "vocab.family"],
             "Hello comes first, goodbye comes last.",
@@ -556,7 +431,7 @@ LESSON_1 = {
 LESSON_2 = {
     "slug": "my-home",
     "title": "My Home",
-    "description": "Mia and Alex show you their house.",
+    "description": "{little} and {boy} show you their house.",
     "minutes": 20,
     "objectives": [
         "Name things at home: house, room, door, table, chair, bed, window.",
@@ -575,18 +450,18 @@ LESSON_2 = {
     ],
     "episode": (
         "Welcome to Our House",
-        "Mia gives a tour of the house. Alex mixes up the door and the window, and Mia helps him.",
+        "{little} gives a tour of the house. {boy} mixes up the door and the window, and {little} helps him.",
     ),
     "content": {
-        "story_intro": "Mia and Alex invite you to their house. Come in!",
+        "story_intro": "{little} and {boy} invite you to their house. Come in!",
         "reading": {
             "title": "Our House",
             "paragraphs": [
-                {"sentences": ["Hello! I am Mia.", "This is my house."]},
+                {"sentences": ["Hello! I am {little}.", "This is my house."]},
                 {"sentences": ["This is a door.", "And this is a window."]},
                 {"sentences": ["Look! It is a table.", "It is a chair."]},
                 {"sentences": ["This is my room.", "This is my bed."]},
-                {"sentences": ["This is Alex's room.", "Alex is my brother."]},
+                {"sentences": ["This is {boy}'s room.", "{boy} is my brother."]},
                 {"sentences": ["My mother and my father say: Goodbye!"]},
             ],
             "highlight": ["house", "room", "door", "table", "chair", "bed", "window"],
@@ -596,19 +471,19 @@ LESSON_2 = {
                 "id": "l2-door",
                 "title": "Door or window?",
                 "transcript": [
-                    {"speaker": "Mia", "text": "What is it, Alex?"},
-                    {"speaker": "Alex", "text": "It is a window!"},
-                    {"speaker": "Mia", "text": "No, Alex. It is a door."},
-                    {"speaker": "Alex", "text": "Oh! This is a door. That is a window."},
+                    {"speaker": "{little}", "text": "What is it, {boy}?"},
+                    {"speaker": "{boy}", "text": "It is a window!"},
+                    {"speaker": "{little}", "text": "No, {boy}. It is a door."},
+                    {"speaker": "{boy}", "text": "Oh! This is a door. That is a window."},
                 ],
             },
             {
                 "id": "l2-room",
-                "title": "Mia's room",
+                "title": "{little}'s room",
                 "transcript": [
-                    {"speaker": "Mia", "text": "This is my room."},
-                    {"speaker": "Mia", "text": "It is a bed. It is my bed."},
-                    {"speaker": "Mia", "text": "It is a chair. It is a table."},
+                    {"speaker": "{little}", "text": "This is my room."},
+                    {"speaker": "{little}", "text": "It is a bed. It is my bed."},
+                    {"speaker": "{little}", "text": "It is a chair. It is a table."},
                 ],
             },
         ],
@@ -658,20 +533,20 @@ LESSON_2 = {
             "a",
             ["vocab.bed", "grammar.it_is_a"],
             "Listen for the last word.",
-            "Mia says: It is a bed.",
+            "{little} says: It is a bed.",
             ex_type="LISTENING_COMPREHENSION",
             listen_text="This is my room. It is a bed.",
         ),
         choice(
             "listen-door",
             "LISTENING",
-            "Listen to Mia and Alex. Then answer.",
+            "Listen to {little} and {boy}. Then answer.",
             "At the end, what is it?",
             [("a door", "🚪"), ("a window", "🪟"), ("a table", None)],
             "a",
             ["vocab.door", "vocab.window"],
-            "Mia says: No, Alex. It is a …",
-            "Mia says: It is a door.",
+            "{little} says: No, {boy}. It is a …",
+            "{little} says: It is a door.",
             ex_type="LISTENING_COMPREHENSION",
             listening_id="l2-door",
         ),
@@ -709,22 +584,22 @@ LESSON_2 = {
             "READING",
             "Read the story. Then answer.",
             "Who says hello at the start?",
-            [("Mia", "👧"), ("Alex", "👦"), ("Mother", "👩")],
+            [("{little}", "👧"), ("{boy}", "👦"), ("Mother", "👩")],
             "a",
             ["vocab.hello", "grammar.i_am"],
             "Look at the first line.",
-            "Hello! I am Mia.",
+            "Hello! I am {little}.",
             ex_type="READING_COMPREHENSION",
         ),
         true_false(
             "read-alex-room",
             "READING",
             "Read the story. True or false?",
-            "Alex is Mia's brother.",
+            "{boy} is {little}'s brother.",
             True,
             ["vocab.brother"],
             "Look at paragraph 5.",
-            "Mia says: Alex is my brother.",
+            "{little} says: {boy} is my brother.",
         ),
         speak(
             "say-home",
@@ -748,12 +623,12 @@ LESSON_2 = {
             "quiz-name",
             "QUIZ",
             "Choose the missing word.",
-            "Hello! My ___ is Mia. This is my house.",
+            "Hello! My ___ is {little}. This is my house.",
             ["name"],
             ["name", "room", "door"],
             ["vocab.name", "vocab.house"],
-            "My … is Mia.",
-            "My name is Mia. This is my house.",
+            "My … is {little}.",
+            "My name is {little}. This is my house.",
         ),
         true_false(
             "quiz-door",
@@ -781,7 +656,7 @@ LESSON_2 = {
 LESSON_3 = {
     "slug": "my-little-pet",
     "title": "My Little Pet",
-    "description": "Meet Spot the dog and Mia's fish.",
+    "description": "Meet Spot the dog and {little}'s fish.",
     "minutes": 20,
     "objectives": [
         "Name animals: dog, cat, fish, bird, pet.",
@@ -799,17 +674,17 @@ LESSON_3 = {
     ],
     "episode": (
         "Spot!",
-        "Alex introduces his dog Spot. Mia shows her fish. A bird visits the "
+        "{boy} introduces his dog Spot. {little} shows her fish. A bird visits the "
         "window and everyone asks: What is this?",
     ),
     "content": {
-        "story_intro": "Alex and Mia have pets. Do you have a pet?",
+        "story_intro": "{boy} and {little} have pets. Do you have a pet?",
         "reading": {
             "title": "Spot",
             "paragraphs": [
-                {"sentences": ["Hello! I am Alex.", "I have a pet."]},
+                {"sentences": ["Hello! I am {boy}.", "I have a pet."]},
                 {"sentences": ["What is this?", "It is a dog!", "My dog is Spot."]},
-                {"sentences": ["Mia is my sister.", "Mia says: I have a fish."]},
+                {"sentences": ["{little} is my sister.", "{little} says: I have a fish."]},
                 {"sentences": ["This is my room.", "What is this at the window?", "It is a bird!"]},
                 {"sentences": ["Spot is on my bed.", "Spot is a good dog."]},
             ],
@@ -820,10 +695,10 @@ LESSON_3 = {
                 "id": "l3-spot",
                 "title": "What is this?",
                 "transcript": [
-                    {"speaker": "Mia", "text": "What is this?"},
-                    {"speaker": "Alex", "text": "It is a cat."},
-                    {"speaker": "Mia", "text": "No! It is a dog. It is Spot!"},
-                    {"speaker": "Alex", "text": "Yes! I have a dog."},
+                    {"speaker": "{little}", "text": "What is this?"},
+                    {"speaker": "{boy}", "text": "It is a cat."},
+                    {"speaker": "{little}", "text": "No! It is a dog. It is Spot!"},
+                    {"speaker": "{boy}", "text": "Yes! I have a dog."},
                 ],
             },
         ],
@@ -881,11 +756,11 @@ LESSON_3 = {
         true_false(
             "spot-cat",
             "LISTENING",
-            "Listen to Mia and Alex. True or false?",
+            "Listen to {little} and {boy}. True or false?",
             "Spot is a cat.",
             False,
             ["vocab.dog", "vocab.cat"],
-            "Mia says: No! It is a …",
+            "{little} says: No! It is a …",
             "Spot is a dog, not a cat.",
             listening_id="l3-spot",
         ),
@@ -933,12 +808,12 @@ LESSON_3 = {
             "read-mia-pet",
             "READING",
             "Read the story. Then answer.",
-            "Mia says: I have a …",
+            "{little} says: I have a …",
             [("fish", "🐟"), ("dog", "🐶"), ("bird", "🐦")],
             "a",
             ["vocab.fish", "grammar.i_have_a"],
             "Look at paragraph 3.",
-            "Mia says: I have a fish.",
+            "{little} says: I have a fish.",
             ex_type="READING_COMPREHENSION",
         ),
         order(
@@ -946,9 +821,9 @@ LESSON_3 = {
             "READING",
             "Put the story in order.",
             [
-                "Alex says: I have a pet.",
+                "{boy} says: I have a pet.",
                 "We see Spot the dog.",
-                "Mia says: I have a fish.",
+                "{little} says: I have a fish.",
                 "A bird is at the window.",
             ],
             ["grammar.i_have_a", "vocab.dog", "vocab.fish", "vocab.bird"],
@@ -966,7 +841,7 @@ LESSON_3 = {
             "quiz-siblings",
             "QUIZ",
             "Choose the right answer.",
-            "Alex and Mia are …",
+            "{boy} and {little} are …",
             [
                 ("brother and sister", "👦👧"),
                 ("mother and father", "👩👨"),
@@ -975,7 +850,7 @@ LESSON_3 = {
             "a",
             ["vocab.brother", "vocab.sister"],
             "Remember Lesson 1.",
-            "Alex is a brother. Mia is a sister.",
+            "{boy} is a brother. {little} is a sister.",
         ),
         choice(
             "quiz-bed",
@@ -1014,7 +889,7 @@ LESSON_3 = {
 LESSON_4 = {
     "slug": "colors-and-toys",
     "title": "Colors and Toys",
-    "description": "Alex and Mia play with their favourite toys.",
+    "description": "{boy} and {little} play with their favourite toys.",
     "minutes": 25,
     "objectives": [
         "Name colours: red, blue, green, yellow.",
@@ -1033,16 +908,22 @@ LESSON_4 = {
     ],
     "episode": (
         "Toy Time",
-        "Mia and Alex play with a doll, a car and a ball. Spot runs off with the blue ball.",
+        "{little} and {boy} play with a doll, a car and a ball. Spot runs off with the blue ball.",
     ),
     "content": {
-        "story_intro": "It is toy time! What toys do Mia and Alex have?",
+        "story_intro": "It is toy time! What toys do {little} and {boy} have?",
         "reading": {
             "title": "Our Toys",
             "paragraphs": [
-                {"sentences": ["Mia and Alex have toys."]},
-                {"sentences": ["Mia: I have a doll.", "It is a yellow doll.", "I like my doll."]},
-                {"sentences": ["Alex: I have a car.", "It is a red car.", "I like red!"]},
+                {"sentences": ["{little} and {boy} have toys."]},
+                {
+                    "sentences": [
+                        "{little}: I have a doll.",
+                        "It is a yellow doll.",
+                        "I like my doll.",
+                    ]
+                },
+                {"sentences": ["{boy}: I have a car.", "It is a red car.", "I like red!"]},
                 {"sentences": ["What is this?", "It is a blue ball.", "It is Spot's ball!"]},
                 {"sentences": ["Spot: Woof! Woof!", "Spot likes the blue ball."]},
             ],
@@ -1053,10 +934,10 @@ LESSON_4 = {
                 "id": "l4-toys",
                 "title": "Favourite toys",
                 "transcript": [
-                    {"speaker": "Alex", "text": "What is this, Mia?"},
-                    {"speaker": "Mia", "text": "It is my doll. I like my doll."},
-                    {"speaker": "Alex", "text": "I like the blue car."},
-                    {"speaker": "Mia", "text": "And I like the green ball!"},
+                    {"speaker": "{boy}", "text": "What is this, {little}?"},
+                    {"speaker": "{little}", "text": "It is my doll. I like my doll."},
+                    {"speaker": "{boy}", "text": "I like the blue car."},
+                    {"speaker": "{little}", "text": "And I like the green ball!"},
                 ],
             },
         ],
@@ -1114,25 +995,25 @@ LESSON_4 = {
         choice(
             "listen-green-ball",
             "LISTENING",
-            "Listen. What does Mia like?",
-            "Mia likes …",
+            "Listen. What does {little} like?",
+            "{little} likes …",
             [("a green ball", "🟢"), ("a red ball", "🔴"), ("a blue car", "🔵")],
             "a",
             ["vocab.green", "vocab.ball", "grammar.i_like"],
             "Listen for the colour.",
-            "Mia says: I like the green ball.",
+            "{little} says: I like the green ball.",
             ex_type="LISTENING_COMPREHENSION",
             listen_text="I like the green ball.",
         ),
         true_false(
             "listen-blue-car",
             "LISTENING",
-            "Listen to Alex and Mia. True or false?",
-            "Mia likes the blue car.",
+            "Listen to {boy} and {little}. True or false?",
+            "{little} likes the blue car.",
             False,
             ["vocab.blue", "vocab.car", "grammar.i_like"],
             "Who says 'I like the blue car'?",
-            "Alex likes the blue car. Mia likes the doll and the green ball.",
+            "{boy} likes the blue car. {little} likes the doll and the green ball.",
             listening_id="l4-toys",
         ),
         blank(
@@ -1179,7 +1060,7 @@ LESSON_4 = {
             "read-car",
             "READING",
             "Read the story. Then answer.",
-            "Alex has a car. It is …",
+            "{boy} has a car. It is …",
             [("red", "🔴"), ("blue", "🔵"), ("yellow", "🟡")],
             "a",
             ["vocab.red", "vocab.car"],
@@ -1252,7 +1133,7 @@ LESSON_4 = {
 LESSON_5 = {
     "slug": "where-is-my-ball",
     "title": "Where Is My Ball?",
-    "description": "Alex cannot find his ball. Help him look!",
+    "description": "{boy} cannot find his ball. Help him look!",
     "minutes": 25,
     "objectives": [
         "Ask 'Where is …?'.",
@@ -1277,17 +1158,27 @@ LESSON_5 = {
     ],
     "episode": (
         "The Lost Ball",
-        "Alex loses his red ball. Mia, Mother and the viewer search "
+        "{boy} loses his red ball. {little}, Mother and the viewer search "
         "the house: under the bed, on the chair... Spot has it under the table!",
     ),
     "content": {
-        "story_intro": "Oh no! Alex cannot find his red ball. Can you help?",
+        "story_intro": "Oh no! {boy} cannot find his red ball. Can you help?",
         "reading": {
             "title": "Where Is My Ball?",
             "paragraphs": [
-                {"sentences": ["Alex: Oh no! Where is my ball?", "Mia: Is it in your room?"]},
-                {"sentences": ["Mia: Is it under the bed?", "Alex: No. My car is under the bed."]},
-                {"sentences": ["Mia: Is it on the chair?", "Alex: No. Your doll is on the chair."]},
+                {"sentences": ["{boy}: Oh no! Where is my ball?", "{little}: Is it in your room?"]},
+                {
+                    "sentences": [
+                        "{little}: Is it under the bed?",
+                        "{boy}: No. My car is under the bed.",
+                    ]
+                },
+                {
+                    "sentences": [
+                        "{little}: Is it on the chair?",
+                        "{boy}: No. Your doll is on the chair.",
+                    ]
+                },
                 {
                     "sentences": [
                         "Mother: Where is the red ball?",
@@ -1297,7 +1188,7 @@ LESSON_5 = {
                 {
                     "sentences": [
                         "Spot is under the table too.",
-                        "Alex: Here is my ball! Thank you, Spot!",
+                        "{boy}: Here is my ball! Thank you, Spot!",
                     ]
                 },
             ],
@@ -1308,10 +1199,10 @@ LESSON_5 = {
                 "id": "l5-clues",
                 "title": "Where is it?",
                 "transcript": [
-                    {"speaker": "Mia", "text": "Where is my doll?"},
-                    {"speaker": "Alex", "text": "It is on the bed."},
-                    {"speaker": "Mia", "text": "Where is the cat?"},
-                    {"speaker": "Alex", "text": "The cat is under the chair."},
+                    {"speaker": "{little}", "text": "Where is my doll?"},
+                    {"speaker": "{boy}", "text": "It is on the bed."},
+                    {"speaker": "{little}", "text": "Where is the cat?"},
+                    {"speaker": "{boy}", "text": "The cat is under the chair."},
                 ],
             },
         ],
@@ -1356,12 +1247,12 @@ LESSON_5 = {
         choice(
             "listen-doll",
             "LISTENING",
-            "Listen to Mia and Alex. Then answer.",
-            "Where is Mia's doll?",
+            "Listen to {little} and {boy}. Then answer.",
+            "Where is {little}'s doll?",
             [("on the bed", "🛏️"), ("under the bed", None), ("in the box", "📦")],
             "a",
             ["vocab.on", "vocab.bed", "vocab.doll", "grammar.where_is"],
-            "Alex says: It is … the bed.",
+            "{boy} says: It is … the bed.",
             "It is on the bed.",
             ex_type="LISTENING_COMPREHENSION",
             listening_id="l5-clues",
@@ -1428,7 +1319,7 @@ LESSON_5 = {
             "here-there",
             "GRAMMAR",
             "Choose the right word.",
-            "Mia points far away: The ball is …!",
+            "{little} points far away: The ball is …!",
             [("there", "👉"), ("here", "👇")],
             "a",
             ["vocab.there", "vocab.here"],
@@ -1470,9 +1361,9 @@ LESSON_5 = {
             "READING",
             "Put the story in order.",
             [
-                "Alex cannot find his ball.",
+                "{boy} cannot find his ball.",
                 "His car is under the bed.",
-                "Mia's doll is on the chair.",
+                "{little}'s doll is on the chair.",
                 "Spot is under the table with the ball.",
             ],
             ["vocab.under", "vocab.on", "vocab.car", "vocab.doll"],
@@ -1490,12 +1381,12 @@ LESSON_5 = {
             "quiz-mia",
             "QUIZ",
             "Choose the right answer.",
-            "Mia is Alex's …",
+            "{little} is {boy}'s …",
             [("sister", "👧"), ("mother", "👩"), ("dog", "🐶")],
             "a",
             ["vocab.sister"],
             "Remember Lesson 1.",
-            "Mia is Alex's sister.",
+            "{little} is {boy}'s sister.",
         ),
         choice(
             "quiz-door",
@@ -1553,16 +1444,10 @@ LESSON_5 = {
     ],
 }
 
-LESSONS = [LESSON_1, LESSON_2, LESSON_3, LESSON_4, LESSON_5]
 
-COURSE = {
-    "slug": "english-story-world",
-    "title": "English Story World",
-    "description": "Learn English with Alex and Mia through stories, games and songs.",
-}
-LEVEL = {"cefr": "A1", "title": "A1 · Beginner", "description": "First words and sentences."}
 UNIT = {
     "slug": "little-explorers",
     "title": "Little Explorers",
-    "description": "Meet Alex and Mia: family, home, pets, toys and where things are.",
+    "description": "Meet {boy} and {little}: family, home, pets, toys and where things are.",
+    "lessons": [LESSON_1, LESSON_2, LESSON_3, LESSON_4, LESSON_5],
 }

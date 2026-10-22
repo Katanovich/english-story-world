@@ -7,7 +7,7 @@ const nunito = Nunito({ subsets: ["latin", "cyrillic"], variable: "--font-nunito
 
 export const metadata: Metadata = {
   title: { default: "English Story World", template: "%s · English Story World" },
-  description: "Learn English with Alex and Mia.",
+  description: "Learn English through family stories, games and talking.",
   robots: { index: false, follow: false },
 };
 

@@ -29,3 +29,6 @@ backend/media_storage/
 .DS_Store
 .idea/
 .vscode/
+
+# Private character names for the seed (see backend/app/seed/characters.py)
+backend/app/seed/characters.local.json

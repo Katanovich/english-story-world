@@ -37,7 +37,7 @@ function CreateForm({ form, onDone }: { form: FormKind; onDone: (id?: string) =>
   return (
     <form onSubmit={submit} className="mt-2 flex flex-wrap items-end gap-2 rounded-lg bg-bg p-3">
       {form.kind === "level" && (
-        <Field label="Уровень CEFR"><Select value={cefr} onChange={(e) => setCefr(e.target.value)}>{["A1", "A2", "B1", "B2", "C1"].map((l) => <option key={l}>{l}</option>)}</Select></Field>
+        <Field label="Уровень CEFR"><Select value={cefr} onChange={(e) => setCefr(e.target.value)}>{["A1", "A2", "B1", "B2", "C1", "C2"].map((l) => <option key={l}>{l}</option>)}</Select></Field>
       )}
       <Field label="Название"><Input value={title} onChange={(e) => setTitle(e.target.value)} required={form.kind !== "level"} /></Field>
       {form.kind !== "level" && <Field label="Slug" hint="латиница и дефисы; пусто — из названия"><Input value={slug} onChange={(e) => setSlug(e.target.value)} /></Field>}

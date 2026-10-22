@@ -7,11 +7,13 @@ learning-item key, exercise key), so rerunning never creates duplicates.
   edited later in the CMS is not overwritten.
 - `update=True` re-applies the seed content. Changed exercises get a new `version`;
   changed lessons get a new `content_version`, so old attempts stay interpretable.
+- Character names ({boy}, {little}, ...) are filled in from app/seed/characters.py.
 
 The seed never creates user accounts (use `python -m app.cli create-admin`).
 """
 
 from dataclasses import dataclass, field
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -39,7 +41,8 @@ from app.models.enums import (
     RecallMode,
 )
 from app.schemas.content import LessonContent
-from app.seed import little_explorers as data
+from app.seed import content as raw_content
+from app.seed.characters import load_names, personalize
 
 PUB = PublicationStatus.PUBLISHED
 
@@ -59,21 +62,53 @@ class SeedReport:
         return f"created: {fmt(self.created)}; updated: {fmt(self.updated)}"
 
 
-def validate_seed_data() -> None:
-    """Fail fast if any seed lesson/exercise is invalid or references unknown items."""
-    for lesson in data.LESSONS:
+@dataclass
+class SeedData:
+    course: dict[str, Any]
+    levels: list[dict[str, Any]]
+    items: dict[str, tuple]
+
+    def lessons(self) -> list[tuple[dict, dict, dict]]:
+        """(level, unit, lesson) in course order."""
+        return [
+            (level, unit, lesson)
+            for level in self.levels
+            for unit in level["units"]
+            for lesson in unit["lessons"]
+        ]
+
+
+def load_seed_data(names: dict[str, str] | None = None) -> SeedData:
+    names = names or load_names()
+    return SeedData(
+        course=personalize(raw_content.COURSE, names),
+        levels=personalize(raw_content.LEVELS, names),
+        items=personalize(raw_content.ITEMS, names),
+    )
+
+
+def validate_seed_data(data: SeedData) -> None:
+    """Fail fast on invalid content, unknown items, or items used before introduced."""
+    order = {lesson["slug"]: i for i, (_, _, lesson) in enumerate(data.lessons())}
+    if len(order) != len(data.lessons()):
+        raise ValueError("Lesson slugs must be unique across the course.")
+    for key, item in data.items.items():
+        if item[4] not in order:
+            raise ValueError(f"Item {key} is introduced in unknown lesson {item[4]}")
+    for _, _, lesson in data.lessons():
         LessonContent.model_validate(lesson["content"])
         keys = [e["key"] for e in lesson["exercises"]]
         if len(keys) != len(set(keys)):
             raise ValueError(f"Duplicate exercise key in {lesson['slug']}")
+        used = set(lesson["review"])
         for ex in lesson["exercises"]:
             validate_definition(ExerciseType(ex["type"]), ex["prompt"], ex["answer"])
-            for key in ex["items"]:
-                if key not in data.ITEMS:
-                    raise ValueError(f"Unknown learning item {key} in {lesson['slug']}/{ex['key']}")
-        for key in lesson["review"]:
-            if key not in data.ITEMS:
-                raise ValueError(f"Unknown review item {key} in {lesson['slug']}")
+            used |= set(ex["items"])
+        for key in used:
+            if key not in data.items:
+                raise ValueError(f"Unknown learning item {key} in {lesson['slug']}")
+            if order[data.items[key][4]] > order[lesson["slug"]]:
+                raise ValueError(f"{key} is used in {lesson['slug']} before it is introduced")
 
 
 def _set(obj: object, values: dict, report: SeedReport, kind: str, update: bool) -> bool:
@@ -88,130 +123,81 @@ def _set(obj: object, values: dict, report: SeedReport, kind: str, update: bool)
     return bool(changed)
 
 
-def run_seed(db: Session, update: bool = False) -> SeedReport:
-    validate_seed_data()
+def run_seed(db: Session, update: bool = False, data: SeedData | None = None) -> SeedReport:
+    data = data or load_seed_data()
+    validate_seed_data(data)
     report = SeedReport()
 
-    # Course / level / unit -------------------------------------------------------------
-    course = db.scalar(select(Course).where(Course.slug == data.COURSE["slug"]))
+    course_values = {"title": data.course["title"], "description": data.course["description"]}
+    course = db.scalar(select(Course).where(Course.slug == data.course["slug"]))
     if course is None:
-        course = Course(
-            slug=data.COURSE["slug"],
-            title=data.COURSE["title"],
-            description=data.COURSE["description"],
-            status=PUB,
-        )
+        course = Course(slug=data.course["slug"], status=PUB, **course_values)
         db.add(course)
+        db.flush()
         report.add(report.created, "courses")
-        update_course = False
     else:
-        update_course = update
-    _set(
-        course,
-        {"title": data.COURSE["title"], "description": data.COURSE["description"]},
-        report,
-        "courses",
-        update_course,
-    )
+        _set(course, course_values, report, "courses", update)
 
-    db.flush()
-    level = db.scalar(
-        select(CourseLevel).where(
-            CourseLevel.course_id == course.id, CourseLevel.cefr_level == CefrLevel.A1
-        )
-    )
-    if level is None:
-        level = CourseLevel(
-            course_id=course.id,
-            cefr_level=CefrLevel.A1,
-            title=data.LEVEL["title"],
-            description=data.LEVEL["description"],
-            position=1,
-        )
-        db.add(level)
-        report.add(report.created, "levels")
-        update_level = False
-    else:
-        update_level = update
-    _set(
-        level,
-        {"title": data.LEVEL["title"], "description": data.LEVEL["description"]},
-        report,
-        "levels",
-        update_level,
-    )
-
-    db.flush()
-    unit = db.scalar(select(Unit).where(Unit.level_id == level.id, Unit.slug == data.UNIT["slug"]))
-    if unit is None:
-        unit = Unit(
-            level_id=level.id,
-            slug=data.UNIT["slug"],
-            title=data.UNIT["title"],
-            description=data.UNIT["description"],
-            position=1,
-        )
-        db.add(unit)
-        report.add(report.created, "units")
-        update_unit = False
-    else:
-        update_unit = update
-    _set(
-        unit,
-        {"title": data.UNIT["title"], "description": data.UNIT["description"]},
-        report,
-        "units",
-        update_unit,
-    )
-    db.flush()
-
-    # Lessons (needed before items, which reference their introducing lesson) ------------
-    lessons: dict[int, Lesson] = {}
-    lesson_is_new: dict[int, bool] = {}
-    for number, spec in enumerate(data.LESSONS, start=1):
-        lesson = db.scalar(
-            select(Lesson).where(Lesson.unit_id == unit.id, Lesson.slug == spec["slug"])
-        )
-        content = LessonContent.model_validate(spec["content"]).model_dump(
-            mode="json", exclude_none=True
-        )
-        values = {
-            "title": spec["title"],
-            "description": spec["description"],
-            "objectives": spec["objectives"],
-            "cefr_level": CefrLevel.A1,
-            "position": number,
-            "estimated_minutes": spec["minutes"],
-            "content": content,
+    # Structure + lessons ------------------------------------------------------------------
+    lessons: dict[str, Lesson] = {}
+    new_lessons: set[str] = set()
+    for level_pos, level_spec in enumerate(data.levels, start=1):
+        cefr = CefrLevel(level_spec["cefr"])
+        level_values = {
+            "title": level_spec["title"],
+            "description": level_spec["description"],
+            "position": level_pos,
         }
-        if lesson is None:
-            lesson = Lesson(
-                unit_id=unit.id, slug=spec["slug"], status=PUB, content_version=1, **values
+        level = db.scalar(
+            select(CourseLevel).where(
+                CourseLevel.course_id == course.id, CourseLevel.cefr_level == cefr
             )
-            db.add(lesson)
-            report.add(report.created, "lessons")
-            lesson_is_new[number] = True
+        )
+        if level is None:
+            level = CourseLevel(course_id=course.id, cefr_level=cefr, **level_values)
+            db.add(level)
+            db.flush()
+            report.add(report.created, "levels")
         else:
-            lesson_is_new[number] = False
-            if _set(lesson, values, report, "lessons", update):
-                lesson.content_version += 1
-        lessons[number] = lesson
+            _set(level, level_values, report, "levels", update)
+
+        for unit_pos, unit_spec in enumerate(level_spec["units"], start=1):
+            unit_values = {
+                "title": unit_spec["title"],
+                "description": unit_spec["description"],
+                "position": unit_pos,
+            }
+            unit = db.scalar(
+                select(Unit).where(Unit.level_id == level.id, Unit.slug == unit_spec["slug"])
+            )
+            if unit is None:
+                unit = Unit(level_id=level.id, slug=unit_spec["slug"], **unit_values)
+                db.add(unit)
+                db.flush()
+                report.add(report.created, "units")
+            else:
+                _set(unit, unit_values, report, "units", update)
+
+            for lesson_pos, spec in enumerate(unit_spec["lessons"], start=1):
+                lesson, created = _upsert_lesson(db, unit, cefr, lesson_pos, spec, report, update)
+                if created:
+                    new_lessons.add(spec["slug"])
+                lessons[spec["slug"]] = lesson
     db.flush()
 
-    # Learning items ----------------------------------------------------------------------
+    # Learning items ------------------------------------------------------------------------
     items: dict[str, LearningItem] = {}
-    item_lesson: dict[str, int] = {}
-    for key, (kind, text, emoji, ru, lesson_no, examples, explanation) in data.ITEMS.items():
-        item_lesson[key] = lesson_no
+    for key, (kind, text, emoji, ru, lesson_slug, examples, explanation) in data.items.items():
+        lesson = lessons[lesson_slug]
         values = {
             "kind": LearningItemKind(kind),
             "text": text,
             "emoji": emoji,
             "translation_ru": ru,
-            "cefr_level": CefrLevel.A1,
+            "cefr_level": lesson.cefr_level,
             "examples": examples,
             "explanation": explanation,
-            "introduced_in_lesson_id": lessons[lesson_no].id,
+            "introduced_in_lesson_id": lesson.id,
         }
         item = db.scalar(select(LearningItem).where(LearningItem.key == key))
         if item is None:
@@ -223,21 +209,48 @@ def run_seed(db: Session, update: bool = False) -> SeedReport:
         items[key] = item
     db.flush()
 
-    # Exercises, item links, lesson item roles, episodes --------------------------------
-    for number, spec in enumerate(data.LESSONS, start=1):
-        lesson = lessons[number]
-        if not lesson_is_new[number] and not update:
+    # Exercises, links, review roles, episodes ----------------------------------------------
+    position_of = {lesson["slug"]: i for i, (_, _, lesson) in enumerate(data.lessons())}
+    item_lesson = {key: position_of[item[4]] for key, item in data.items.items()}
+    for _, _, spec in data.lessons():
+        lesson = lessons[spec["slug"]]
+        if spec["slug"] not in new_lessons and not update:
             continue
-        used_items: set[str] = set(spec["review"])
+        used: set[str] = set(spec["review"])
         for position, ex in enumerate(spec["exercises"], start=1):
-            used_items |= set(ex["items"])
+            used |= set(ex["items"])
             _upsert_exercise(db, lesson, ex, position, items, report, update)
         _remove_stale_exercises(db, lesson, {e["key"] for e in spec["exercises"]}, report)
-        _sync_lesson_items(db, lesson, number, used_items, items, item_lesson)
+        _sync_lesson_items(db, lesson, position_of[spec["slug"]], used, items, item_lesson)
         _upsert_episode(db, lesson, spec["episode"], report, update)
 
     db.commit()
     return report
+
+
+def _upsert_lesson(db, unit, cefr, position, spec, report, update) -> tuple[Lesson, bool]:
+    content = LessonContent.model_validate(spec["content"]).model_dump(
+        mode="json", exclude_none=True
+    )
+    values = {
+        "title": spec["title"],
+        "description": spec["description"],
+        "objectives": spec["objectives"],
+        "cefr_level": cefr,
+        "position": position,
+        "estimated_minutes": spec["minutes"],
+        "content": content,
+    }
+    lesson = db.scalar(select(Lesson).where(Lesson.unit_id == unit.id, Lesson.slug == spec["slug"]))
+    if lesson is None:
+        lesson = Lesson(unit_id=unit.id, slug=spec["slug"], status=PUB, content_version=1, **values)
+        db.add(lesson)
+        db.flush()
+        report.add(report.created, "lessons")
+        return lesson, True
+    if _set(lesson, values, report, "lessons", update):
+        lesson.content_version += 1
+    return lesson, False
 
 
 def _upsert_exercise(db, lesson, ex, position, items, report, update) -> None:
@@ -294,23 +307,21 @@ def _remove_stale_exercises(db, lesson, keys: set[str], report) -> None:
             report.add(report.updated, "exercises_removed")
 
 
-def _sync_lesson_items(db, lesson, number, used, items, item_lesson) -> None:
+def _sync_lesson_items(db, lesson, index, used, items, item_lesson) -> None:
     """NEW = introduced here; RECENT_REVIEW = previous lesson; OLDER_REVIEW = earlier."""
     wanted: dict = {}
     for key in used:
         introduced = item_lesson[key]
-        if introduced > number:
-            raise ValueError(f"{key} is used in lesson {number} before it is introduced")
-        if introduced == number:
+        if introduced == index:
             role = LessonItemRole.NEW
-        elif introduced == number - 1:
+        elif introduced == index - 1:
             role = LessonItemRole.RECENT_REVIEW
         else:
             role = LessonItemRole.OLDER_REVIEW
         wanted[items[key].id] = role
     # Every item introduced in this lesson is NEW even if no exercise practises it yet.
     for key, introduced in item_lesson.items():
-        if introduced == number:
+        if introduced == index:
             wanted[items[key].id] = LessonItemRole.NEW
     existing = {
         link.learning_item_id: link

@@ -16,4 +16,4 @@ extend-immutable-calls = ["fastapi.Query", "fastapi.Depends", "fastapi.File", "f
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S105", "S106"]
-"app/seed/little_explorers.py" = ["E501"]
+"app/seed/content/*.py" = ["E501"]

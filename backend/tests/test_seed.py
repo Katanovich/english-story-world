@@ -13,8 +13,19 @@ from app.models import (
     StoryEpisode,
 )
 from app.models.enums import ExerciseType, LessonItemRole, LessonSection
-from app.seed import little_explorers as data
-from app.seed import run_seed
+from app.seed import load_seed_data
+from app.seed import run_seed as _run_seed
+from app.seed.characters import ROLES
+
+DEFAULT_NAMES = {role: default for role, (default, _) in ROLES.items()}
+# Tests always use the public default names, regardless of any local names file.
+DATA = load_seed_data(DEFAULT_NAMES)
+ALL_LESSONS = [lesson for _, _, lesson in DATA.lessons()]
+
+
+def run_seed(db, update=False):
+    return _run_seed(db, update=update, data=DATA)
+
 
 TABLES = [Course, Lesson, LearningItem, Exercise, LessonLearningItem, StoryEpisode]
 
@@ -24,7 +35,17 @@ def _counts(db):
 
 
 def _lessons(db):
-    return list(db.scalars(select(Lesson).order_by(Lesson.position)))
+    """Lessons in course order (level, unit, lesson position)."""
+    from app.models import CourseLevel, Unit
+
+    return list(
+        db.scalars(
+            select(Lesson)
+            .join(Unit, Unit.id == Lesson.unit_id)
+            .join(CourseLevel, CourseLevel.id == Unit.level_id)
+            .order_by(CourseLevel.position, Unit.position, Lesson.position)
+        )
+    )
 
 
 def correct_response(ex: Exercise) -> dict:
@@ -51,13 +72,13 @@ def test_seed_is_repeatable_without_duplicates(db):
     counts = _counts(db)
     assert counts == {
         "courses": 1,
-        "lessons": 5,
-        "learning_items": len(data.ITEMS),
-        "exercises": sum(len(lsn["exercises"]) for lsn in data.LESSONS),
+        "lessons": len(ALL_LESSONS),
+        "learning_items": len(DATA.items),
+        "exercises": sum(len(lsn["exercises"]) for lsn in ALL_LESSONS),
         "lesson_learning_items": counts["lesson_learning_items"],
-        "story_episodes": 5,
+        "story_episodes": len(ALL_LESSONS),
     }
-    assert first.created["lessons"] == 5
+    assert first.created["lessons"] == len(ALL_LESSONS) >= 10
     assert run_seed(db).summary() == "created: nothing; updated: nothing"
     run_seed(db, update=True)
     assert _counts(db) == counts
@@ -91,23 +112,29 @@ def test_cumulative_review_links(db):
     for r in roles[2:]:
         assert r[LessonItemRole.OLDER_REVIEW] > 0
     # Old words are reused, but not every old word in every lesson.
-    total_items = len(data.ITEMS)
+    total_items = len(DATA.items)
     assert all(sum(r.values()) < total_items for r in roles)
 
 
-def test_lesson_5_quiz_covers_all_five_lessons(db):
-    run_seed(db)
-    lesson5 = _lessons(db)[4]
+def _quiz_sources(db, lesson):
     introduced_in = {
         item.id: item.introduced_in_lesson_id for item in db.scalars(select(LearningItem))
     }
-    quiz_lessons = {
+    return {
         introduced_in[link.learning_item_id]
-        for e in lesson5.exercises
+        for e in lesson.exercises
         if e.section == LessonSection.QUIZ
         for link in e.item_links
     }
-    assert quiz_lessons == {lsn.id for lsn in _lessons(db)}
+
+
+def test_unit_final_quizzes_are_cumulative(db):
+    run_seed(db)
+    lessons = _lessons(db)
+    # Lesson 5 quiz covers all of unit 1; lesson 10 quiz reaches back into unit 1 too.
+    assert _quiz_sources(db, lessons[4]) == {lsn.id for lsn in lessons[:5]}
+    sources_10 = _quiz_sources(db, lessons[9])
+    assert len(sources_10) >= 5 and sources_10 & {lsn.id for lsn in lessons[:5]}
 
 
 def test_every_seed_answer_key_scores_correct_through_the_api(db, login_as):
@@ -127,7 +154,8 @@ def test_every_seed_answer_key_scores_correct_through_the_api(db, login_as):
         progress = r.json()["lesson_progress"]
         assert progress["status"] == "COMPLETED" and progress["score"] == progress["max_score"]
     dash = client.get("/api/v1/me/dashboard").json()
-    assert dash["lessons_completed"] == 5 and dash["lessons_total"] == 5
+    n = len(ALL_LESSONS)
+    assert dash["lessons_completed"] == n and dash["lessons_total"] == n
     assert dash["items_practiced"] > 30
 
 

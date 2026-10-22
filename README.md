@@ -5,8 +5,8 @@ characters, **Alex and Mia**, through short illustrated stories, listening dialo
 games, speaking practice and quizzes. Every lesson reuses earlier material, and a spaced-
 repetition review queue brings words back at the right time.
 
-The first release contains the A1 pilot module **"Little Explorers"**: five connected lessons
-with 45 words and grammar patterns and 80 interactive exercises.
+Level **A1 is complete**: 10 lessons in two units ("Little Explorers" and "Our Big Family").
+Levels A2–C2 are being written; see [COURSE_PLAN.md](COURSE_PLAN.md).
 
 | For learners (English UI) | For teachers / admins (Russian UI) |
 |---|---|
@@ -248,6 +248,19 @@ not hard-coded pages: reading passages, listening dialogues and grammar notes ar
 validated JSON. Exercises are rows with a public `prompt` and a private `answer`. New
 lessons are added in the admin CMS without code changes. Only A1 has content so far; the
 other levels are supported by the data model and can be created in the CMS.
+
+### Characters (your own family's names)
+Stories use placeholders such as `{boy}`, `{little}` and `{gran1}`. The public code ships
+neutral default names (Alex, Mia, Kate, …). To use your own family's names, create
+`backend/app/seed/characters.local.json`. This file is git-ignored and never uploaded:
+
+```json
+{"boy": "Alex", "little": "Mia", "teen": "Kate", "dad": "Tom", "mum": "Anna",
+ "gran1": "Rose", "gran2": "Lily", "aunt": "Emma"}
+```
+
+Replace the values with your names (one word each, Latin letters). Then run
+`docker compose up -d --build backend && docker compose exec backend python -m app.cli seed --update`.
 
 ### Cumulative learning
 Each **learning item** (word, phrase or grammar pattern) has a stable key. Every lesson marks

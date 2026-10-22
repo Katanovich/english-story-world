@@ -19,6 +19,8 @@ _settings = get_settings()
 TEST_DB_URL = _settings.test_database_url or f"{_settings.database_url}_test"
 # Must happen before app.db.session is imported anywhere.
 os.environ["DATABASE_URL"] = TEST_DB_URL
+# Tests run over plain http (TestClient), so never use production-only Secure cookies.
+os.environ["APP_ENV"] = "test"
 os.environ["LOCAL_STORAGE_DIR"] = tempfile.mkdtemp(prefix="esw-test-media-")
 get_settings.cache_clear()
 

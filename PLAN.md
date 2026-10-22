@@ -101,3 +101,22 @@ pytest                                     # tests (uses the test database)
   publication panel), `/admin/lessons/[id]/preview`, `/admin/items`, `/admin/media`, `/admin/audit`.
   Components: `src/components/admin.tsx`, `src/components/adminLesson/ExerciseEditor.tsx`; types `src/lib/adminTypes.ts`.
 - Tests: `backend/tests/test_cms.py` (81 backend tests total). Verified in Chrome: admin login, course tree, lesson editor, exercise edit form, students list.
+
+## Course expansion (A1 → C2)
+
+See [COURSE_PLAN.md](COURSE_PLAN.md). Content lives in `backend/app/seed/content/` (one module per
+level/unit, registered in `content/__init__.py` `LEVEL_MODULES`). Items are introduced by lesson
+slug; review roles are derived across the whole course order. Character names are placeholders
+(`{boy}`, `{little}`, …) filled from `app/seed/characters.py` or the git-ignored
+`characters.local.json` (local family names). C2 added to `CefrLevel` (migration c2a1b2c3d4e5).
+
+| Part | Status |
+|------|--------|
+| Course 1: rename system, C2 support, multi-level seed, A1 unit 2 (lessons 6-10) | DONE |
+| Course 2: A2 (10 lessons) | TODO |
+| Course 3: B1 | TODO |
+| Course 4: B2 | TODO |
+| Course 5: C1 | TODO |
+| Course 6: C2 | TODO |
+
+To apply new content locally: `docker compose up -d --build backend && docker compose exec backend python -m app.cli seed`

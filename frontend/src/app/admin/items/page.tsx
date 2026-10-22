@@ -34,7 +34,7 @@ function ItemForm({ initial, onSaved, onCancel }: { initial?: LearningItemAdmin;
     <form onSubmit={submit} className="grid gap-3 rounded-lg bg-bg p-3 sm:grid-cols-3">
       <Field label="Ключ *" hint="стабильный, напр. vocab.cat"><Input value={f.key} onChange={set("key")} required disabled={!!initial} pattern="[a-z0-9_.\-]+" /></Field>
       <Field label="Тип"><Select value={f.kind} onChange={set("kind")}>{KINDS.map((k) => <option key={k}>{k}</option>)}</Select></Field>
-      <Field label="Уровень"><Select value={f.cefr_level} onChange={set("cefr_level")}>{["A1", "A2", "B1", "B2", "C1"].map((l) => <option key={l}>{l}</option>)}</Select></Field>
+      <Field label="Уровень"><Select value={f.cefr_level} onChange={set("cefr_level")}>{["A1", "A2", "B1", "B2", "C1", "C2"].map((l) => <option key={l}>{l}</option>)}</Select></Field>
       <Field label="Текст *"><Input value={f.text} onChange={set("text")} required /></Field>
       <Field label="Эмодзи-иллюстрация"><Input value={f.emoji} onChange={set("emoji")} maxLength={16} /></Field>
       <Field label="Перевод"><Input value={f.translation_ru} onChange={set("translation_ru")} /></Field>

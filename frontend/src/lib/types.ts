@@ -2,7 +2,7 @@
 
 export type Role = "ADMIN" | "STUDENT";
 export type AccountStatus = "INVITED" | "ACTIVE" | "SUSPENDED" | "INACTIVE";
-export type Cefr = "A1" | "A2" | "B1" | "B2" | "C1";
+export type Cefr = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 export type ProgressStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 export type ItemRole = "NEW" | "RECENT_REVIEW" | "OLDER_REVIEW";
 export type Section = "VOCABULARY" | "READING" | "LISTENING" | "GRAMMAR" | "SPEAKING" | "QUIZ";

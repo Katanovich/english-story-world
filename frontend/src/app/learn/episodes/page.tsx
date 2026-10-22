@@ -12,7 +12,7 @@ export default function EpisodesPage() {
   if (error || !data) return <ErrorState message={error?.message ?? "Could not load."} onRetry={reload} />;
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-black">Cartoons with Alex and Mia</h1>
+      <h1 className="text-3xl font-black">Family cartoons</h1>
       {data.length === 0 ? (
         <Card><EmptyState icon="🎬" title="No cartoons yet" /></Card>
       ) : (
