@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* Design tokens: warm, friendly, high-contrast. */
+:root {
+  --bg: #fff9f0;
+  --surface: #ffffff;
+  --ink: #2b2d42;
+  --muted: #5c607a;
+  --line: #ece4d6;
+  --brand: #ff7a45;
+  --brand-ink: #ffffff;
+  --brand-strong: #e85d26;
+  --sky: #3fa7f5;
+  --leaf: #2fb67c;
+  --sun: #ffc93c;
+  --berry: #e5487b;
+  --ok-bg: #e6f7ef;
+  --ok-ink: #11744a;
+  --warn-bg: #fff3d6;
+  --warn-ink: #8a5a00;
+  --err-bg: #fde8ee;
+  --err-ink: #a3214c;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-strong: var(--brand-strong);
+  --color-sky: var(--sky);
+  --color-leaf: var(--leaf);
+  --color-sun: var(--sun);
+  --color-berry: var(--berry);
+  --color-ok-bg: var(--ok-bg);
+  --color-ok-ink: var(--ok-ink);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-ink: var(--warn-ink);
+  --color-err-bg: var(--err-bg);
+  --color-err-ink: var(--err-ink);
+  --font-sans: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sky);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
