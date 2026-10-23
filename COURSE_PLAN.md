@@ -30,7 +30,7 @@ world, and finally his own projects. Content stays child-appropriate at every le
 | B1 | ✅ done (10 lessons) |
 | B2 | ✅ done (10 lessons) |
 | C1 | ✅ done (10 lessons) |
-| C2 | ⏳ next |
+| C2 | ✅ done (10 lessons) |
 
 ---
 
@@ -107,7 +107,7 @@ Sunny or Rainy? (clothes, weather, Put on…) · I Can Swim! (actions, can/can't
 9. Thinking Machines: discussion; past modals of deduction
 10. Presentation Day: discourse markers and structure; C1 review
 
-## C2 · Proficiency: "Mastery"
+## C2 · Proficiency: "Mastery" ✅
 
 **Unit 1: The Art of Language**
 1. Idioms at the Dinner Table: idiomatic and figurative language

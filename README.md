@@ -5,8 +5,8 @@ characters, **Alex and Mia**, through short illustrated stories, listening dialo
 games, speaking practice and quizzes. Every lesson reuses earlier material, and a spaced-
 repetition review queue brings words back at the right time.
 
-Levels **A1, A2, B1, B2 and C1 are complete** (50 lessons, each with words, reading, listening,
-grammar, speaking and a quiz). C2 is being written; see [COURSE_PLAN.md](COURSE_PLAN.md).
+**All six levels, A1 → C2, are complete**: 60 lessons, each with words, reading, listening,
+grammar, speaking and a quiz. See [COURSE_PLAN.md](COURSE_PLAN.md) for the full syllabus.
 
 ## 🔗 Try it online
 

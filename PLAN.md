@@ -117,6 +117,6 @@ slug; review roles are derived across the whole course order. Character names ar
 | Course 3: B1 "Growing Up" (lessons 1-10, `b1_unit1.py`, `b1_unit2.py`) | DONE |
 | Course 4: B2 "Big Ideas" (lessons 1-10, `b2_unit1.py`, `b2_unit2.py`) | DONE |
 | Course 5: C1 "Making a Difference" (lessons 1-10, `c1_unit1.py`, `c1_unit2.py`) | DONE |
-| Course 6: C2 | TODO |
+| Course 6: C2 "Mastery" (lessons 1-10, `c2_unit1.py`, `c2_unit2.py`) | DONE |
 
 To apply new content locally: `docker compose up -d --build backend && docker compose exec backend python -m app.cli seed`
