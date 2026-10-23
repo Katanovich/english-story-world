@@ -29,8 +29,8 @@ world, and finally his own projects. Content stays child-appropriate at every le
 | A2 | ✅ done (10 lessons) |
 | B1 | ✅ done (10 lessons) |
 | B2 | ✅ done (10 lessons) |
-| C1 | ⏳ next |
-| C2 | planned |
+| C1 | ✅ done (10 lessons) |
+| C2 | ⏳ next |
 
 ---
 
@@ -91,7 +91,7 @@ Sunny or Rainy? (clothes, weather, Put on…) · I Can Swim! (actions, can/can't
 9. Festivals of the World: traditions; articles in depth
 10. The Debate Club: opinions and arguments; B2 review
 
-## C1 · Advanced: "Making a Difference"
+## C1 · Advanced: "Making a Difference" ✅
 
 **Unit 1: Media and Projects**
 1. The Documentary: narrative tenses for effect
