@@ -38,7 +38,6 @@ export function Highlighted({ text, words }: { text: string; words: string[] }) 
 }
 
 function Vocabulary({ lesson }: { lesson: LessonDetail }) {
-  const [showRu, setShowRu] = useState(false);
   const newItems = lesson.items.filter((i) => i.role === "NEW");
   const review = lesson.items.filter((i) => i.role !== "NEW");
   return (
@@ -54,14 +53,11 @@ function Vocabulary({ lesson }: { lesson: LessonDetail }) {
           >
             <Illustration imageId={item.image_id} emoji={item.emoji ?? "💬"} media={lesson.media} />
             <span className="text-xl font-extrabold">{item.text}</span>
-            {showRu && item.translation_ru && <span className="text-sm text-muted">{item.translation_ru}</span>}
+            {item.translation_ru && <span lang="ru" className="text-base font-bold text-muted">{item.translation_ru}</span>}
             <span aria-hidden className="text-sm text-muted">🔊</span>
           </button>
         ))}
       </div>
-      <Button variant="ghost" onClick={() => setShowRu((s) => !s)} aria-pressed={showRu}>
-        {showRu ? "Hide Russian" : "Show Russian (по-русски)"}
-      </Button>
       {review.length > 0 && (
         <div className="space-y-2">
           <h3 className="font-extrabold">Do you remember?</h3>
@@ -70,6 +66,7 @@ function Vocabulary({ lesson }: { lesson: LessonDetail }) {
               <span key={item.id} className="rounded-full border-2 border-line bg-surface px-3 py-1 font-bold">
                 {item.emoji && <span aria-hidden>{item.emoji} </span>}
                 {item.text}
+                {item.translation_ru && <span lang="ru" className="font-normal text-muted"> — {item.translation_ru}</span>}
                 {role === "RECENT_REVIEW" && <span className="sr-only"> (last lesson)</span>}
               </span>
             ))}
