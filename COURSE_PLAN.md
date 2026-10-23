@@ -28,8 +28,9 @@ world, and finally his own projects. Content stays child-appropriate at every le
 | A1 | ✅ done (10 lessons) |
 | A2 | ✅ done (10 lessons) |
 | B1 | ✅ done (10 lessons) |
-| B2 | ⏳ next |
-| C1–C2 | planned |
+| B2 | ✅ done (10 lessons) |
+| C1 | ⏳ next |
+| C2 | planned |
 
 ---
 
@@ -74,7 +75,7 @@ Sunny or Rainy? (clothes, weather, Put on…) · I Can Swim! (actions, can/can't
 9. Planning a Party: invitations; *will* vs *going to*
 10. The Town Newspaper: news; reported speech basics; B1 review
 
-## B2 · Upper-intermediate: "Big Ideas"
+## B2 · Upper-intermediate: "Big Ideas" ✅
 
 **Unit 1: Explorers of Science**
 1. Space Week: the solar system; second conditional
