@@ -1,17 +1,26 @@
 # 🌍 English Story World
 
-An English-learning platform for children (CEFR **A1 → C1**). Learners follow two cartoon
+An English-learning platform for children (CEFR **A1 → C2**). Learners follow two cartoon
 characters, **Alex and Mia**, through short illustrated stories, listening dialogues, word
 games, speaking practice and quizzes. Every lesson reuses earlier material, and a spaced-
 repetition review queue brings words back at the right time.
 
-Level **A1 is complete**: 10 lessons in two units ("Little Explorers" and "Our Big Family").
-Levels A2–C2 are being written; see [COURSE_PLAN.md](COURSE_PLAN.md).
+Levels **A1, A2, B1, B2 and C1 are complete** (50 lessons, each with words, reading, listening,
+grammar, speaking and a quiz). C2 is being written; see [COURSE_PLAN.md](COURSE_PLAN.md).
+
+## 🔗 Try it online
+
+**👉 https://constitution-silent-watches-elegant.trycloudflare.com**
+
+This link is a free Cloudflare quick tunnel to the author's computer, so it only works while
+that computer is on and `./scripts/share-online.sh` is running. **The address changes every time
+the tunnel is restarted.** If the link doesn't open, ask for the new one. For a link that never
+changes, see [Share it from your own computer](#-share-it-from-your-own-computer-free) (named tunnel).
 
 | For learners (English UI) | For teachers / admins (Russian UI) |
 |---|---|
 | Dashboard with the next lesson and real progress | Student accounts: create, suspend, restore, reset password |
-| Step-by-step lesson player (words → reading → listening → sentences → speaking → quiz) | Course → level → unit → lesson editor |
+| Step-by-step lesson player (words → reading → listening → grammar → speaking → quiz) | Course → level → unit → lesson editor |
 | 10 exercise types, all checked on the server | Exercise editor with answer keys, hints and linked words |
 | Voice recording and replay (never auto-graded) | Validation before publishing, preview as a student |
 | Review queue, "My words" mastery, cartoon episodes | Media library (images, audio, video, subtitles), audit log |
