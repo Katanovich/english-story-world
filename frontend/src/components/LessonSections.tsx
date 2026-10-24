@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Illustration, ListenButton, ListeningTrackPlayer } from "@/components/media";
-import { Badge, Button } from "@/components/ui";
+import { Badge } from "@/components/ui";
 import { speak } from "@/lib/speech";
 import type { LessonDetail, Section } from "@/lib/types";
 
@@ -107,14 +106,13 @@ function Reading({ lesson }: { lesson: LessonDetail }) {
 }
 
 function Grammar({ lesson }: { lesson: LessonDetail }) {
-  const [showRu, setShowRu] = useState(false);
   return (
     <div className="space-y-4">
       {(lesson.content.grammar ?? []).map((g) => (
         <div key={g.title} className="space-y-2 rounded-2xl bg-bg p-4">
           <h3 className="text-xl font-black">{g.title}</h3>
           <p>{g.explanation}</p>
-          {showRu && g.explanation_ru && <p className="text-muted">{g.explanation_ru}</p>}
+          {g.explanation_ru && <p lang="ru" className="text-muted">{g.explanation_ru}</p>}
           <ul className="space-y-1">
             {g.examples.map((e) => (
               <li key={e} className="flex items-center gap-2 font-bold">
@@ -125,11 +123,6 @@ function Grammar({ lesson }: { lesson: LessonDetail }) {
           </ul>
         </div>
       ))}
-      {lesson.content.grammar?.some((g) => g.explanation_ru) && (
-        <Button variant="ghost" onClick={() => setShowRu((s) => !s)} aria-pressed={showRu}>
-          {showRu ? "Hide Russian" : "Подсказка по-русски"}
-        </Button>
-      )}
     </div>
   );
 }
